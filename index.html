@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trump Paradox II — Ask the Paper</title>
+<style>
+  :root { --bg:#f4f1ea; --card:#fffdf8; --ink:#23201b; --muted:#6b655c;
+          --accent:#9c4a2f; --line:#e2dccf; --user:#ece4d4; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:16px/1.55 Georgia, "Times New Roman", serif; }
+  .wrap { max-width:760px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; }
+  header { padding:22px 20px 12px; border-bottom:1px solid var(--line); }
+  header h1 { margin:0 0 4px; font-size:1.35rem; }
+  header p { margin:0; color:var(--muted); font-size:.9rem; }
+  #log { flex:1; overflow-y:auto; padding:18px 20px 8px; }
+  .msg { margin:0 0 16px; display:flex; }
+  .msg .bubble { padding:11px 14px; border-radius:12px; max-width:88%;
+                 white-space:pre-wrap; word-wrap:break-word; }
+  .msg.user { justify-content:flex-end; }
+  .msg.user .bubble { background:var(--user); border:1px solid var(--line); }
+  .msg.bot .bubble { background:var(--card); border:1px solid var(--line); }
+  .msg.bot .bubble.err { border-color:var(--accent); color:var(--accent); }
+  .role { font-size:.72rem; text-transform:uppercase; letter-spacing:.05em;
+          color:var(--muted); margin:0 4px 4px; align-self:flex-end; }
+  .suggest { display:flex; flex-wrap:wrap; gap:8px; padding:4px 20px 14px; }
+  .suggest button { font:inherit; font-size:.82rem; background:var(--card);
+    border:1px solid var(--line); border-radius:999px; padding:6px 12px;
+    color:var(--ink); cursor:pointer; }
+  .suggest button:hover { border-color:var(--accent); color:var(--accent); }
+  form { display:flex; gap:8px; padding:12px 20px 20px; border-top:1px solid var(--line); }
+  textarea { flex:1; resize:none; font:inherit; padding:10px 12px; border-radius:10px;
+             border:1px solid var(--line); background:var(--card); color:var(--ink); }
+  button.send { font:inherit; background:var(--accent); color:#fff; border:0;
+    border-radius:10px; padding:0 18px; cursor:pointer; }
+  button.send:disabled { opacity:.5; cursor:default; }
+  .cursor::after { content:"▋"; animation:blink 1s steps(1) infinite; color:var(--muted); }
+  @keyframes blink { 50% { opacity:0; } }
+  footer { text-align:center; color:var(--muted); font-size:.75rem; padding:0 20px 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Ask the Paper</h1>
+    <p>Q&amp;A on <em>Trump Paradox II: Immigration, Trade, and White Voting and Attitudes, 2012–2024</em>. Answers come only from the manuscript.</p>
+  </header>
+
+  <div id="log"></div>
+
+  <div class="suggest" id="suggest">
+    <button>What is the main finding?</button>
+    <button>Is trade exposure associated with Republican voting?</button>
+    <button>What does Table 3 show?</button>
+    <button>Which years does the analysis cover?</button>
+  </div>
+
+  <form id="form">
+    <textarea id="input" rows="1" placeholder="Ask a question about the paper…" autofocus></textarea>
+    <button class="send" id="send" type="submit">Send</button>
+  </form>
+  <footer>Powered by Claude · answers are grounded in the paper and may still contain errors.</footer>
+</div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────────────
+// After deploying the Cloudflare Worker, paste its URL here:
+const WORKER_URL = "https://trump-paradox-chatbot.YOUR-SUBDOMAIN.workers.dev";
+// ───────────────────────────────────────────────────────────────────────
+
+const log = document.getElementById("log");
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+const send = document.getElementById("send");
+const suggest = document.getElementById("suggest");
+const history = [];   // [{role, content}] sent to the worker
+
+function addBubble(role, text, isErr) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg " + (role === "user" ? "user" : "bot");
+  const bubble = document.createElement("div");
+  bubble.className = "bubble" + (isErr ? " err" : "");
+  bubble.textContent = text;
+  wrap.appendChild(bubble);
+  log.appendChild(wrap);
+  log.scrollTop = log.scrollHeight;
+  return bubble;
+}
+
+input.addEventListener("input", () => {
+  input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, 160) + "px";
+});
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
+});
+suggest.addEventListener("click", (e) => {
+  if (e.target.tagName === "BUTTON") { input.value = e.target.textContent; form.requestSubmit(); }
+});
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const q = input.value.trim();
+  if (!q || send.disabled) return;
+  suggest.style.display = "none";
+  input.value = ""; input.style.height = "auto";
+  addBubble("user", q);
+  history.push({ role: "user", content: q });
+
+  send.disabled = true;
+  const bubble = addBubble("bot", "");
+  bubble.classList.add("cursor");
+  let answer = "";
+
+  try {
+    const resp = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ messages: history }),
+    });
+
+    const ctype = resp.headers.get("content-type") || "";
+    if (!resp.ok || ctype.includes("application/json")) {
+      const info = await resp.json().catch(() => ({ error: "Request failed (" + resp.status + ")." }));
+      throw new Error(info.detail || info.error || ("HTTP " + resp.status));
+    }
+
+    // Parse the Server-Sent Events stream from Claude.
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const events = buffer.split("\n\n");
+      buffer = events.pop();  // keep the incomplete tail
+      for (const evt of events) {
+        const line = evt.split("\n").find((l) => l.startsWith("data:"));
+        if (!line) continue;
+        let data;
+        try { data = JSON.parse(line.slice(5).trim()); } catch { continue; }
+        if (data.type === "content_block_delta" && data.delta?.type === "text_delta") {
+          answer += data.delta.text;
+          bubble.textContent = answer;
+          log.scrollTop = log.scrollHeight;
+        } else if (data.type === "error") {
+          throw new Error(data.error?.message || "stream error");
+        }
+      }
+    }
+    bubble.classList.remove("cursor");
+    if (!answer.trim()) { bubble.textContent = "(No answer returned.)"; }
+    else { history.push({ role: "assistant", content: answer }); }
+  } catch (err) {
+    bubble.classList.remove("cursor");
+    bubble.classList.add("err");
+    bubble.textContent = "Error: " + err.message +
+      (WORKER_URL.includes("YOUR-SUBDOMAIN") ? "  — set WORKER_URL in index.html to your deployed Worker." : "");
+    history.pop(); // drop the user turn that failed so retry is clean
+  } finally {
+    send.disabled = false;
+    input.focus();
+  }
+});
+</script>
+</body>
+</html>

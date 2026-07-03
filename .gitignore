@@ -1,0 +1,6 @@
+# Never commit secrets to a public (GitHub Pages) repo.
+# The Anthropic API key lives only as a Cloudflare Worker secret.
+*.env
+key.env
+.dev.vars
+.wrangler/
