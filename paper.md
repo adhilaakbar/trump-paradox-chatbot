@@ -1,11 +1,17 @@
-Trump Paradox II: Immigration, Trade, and White Voting and Attitudes, 2012–2024
-Raul Hinojosa Ojeda¹  and  Edward Telles²
+# Trump Paradox II: Immigration, Trade, and White Voting and Attitudes, 2012–2024
+
+**Raul Hinojosa Ojeda¹ and Edward Telles²**
+
 ¹ University of California, Los Angeles  |  ² University of California, Irvine
-Corresponding Author: Raul Hinojosa Ojeda, UCLA, Department of Chicana/o and Central American Studies, 315 Portola Plaza, Los Angeles, CA 90095 | hinojosa@ucla.edu
-May 18, 2026
-Abstract
+
+*Corresponding Author:* Raul Hinojosa Ojeda, UCLA, Department of Chicana/o and Central American Studies, 315 Portola Plaza, Los Angeles, CA 90095 | hinojosa@ucla.edu
+
+*May 18, 2026*
+
+## Abstract
 Donald Trump presented immigration and trade as the causes of the diminished prospects of white working-class voters. Our original analysis (Hinojosa Ojeda and Telles 2021) showed that white voting for Trump was unrelated to immigration levels and, paradoxically, strongest in counties with low levels of trade; anti-immigrant and antitrade attitudes more strongly explained voting for Trump and Republicans in 2016 and 2018 than did actual immigration and trade. In this paper, we extend the analysis through the 2020 presidential election, the 2022 midterms, and the 2024 presidential election. Formal over-time tests show that the immigration-exposure paradox shifted significantly across 2012–2024 and that the attitude–vote association strengthened between 2016 and 2020; we do not claim the paradox deepened through 2024 for the voting models, because the 2024 voting-with-attitudes model cannot be estimated.  At the county level, Republican vote share in 2020–2024 remains negatively associated with immigrant presence (county-level r ≈ −0.37 in 2024) but shows no consistent association with trade exposure (r ≈ 0, non-significant). At the individual level among non-Hispanic white voters, material exposure to immigration and trade continues to be uncorrelated or negatively correlated with Trump/Republican support, whereas anti-immigrant and antitrade attitudes are the strongest attitudinal predictors of Trump/Republican voting, net of demographic and socioeconomic factors. The one exception for trade is narrow and runs opposite to expectation: among Republicans, greater trade exposure predicts lower defection to Democratic House candidates (greater party loyalty), contrary to H4. Descriptively, the unraveling of Trump's narrative observed between 2016 and 2018 persists through 2024: counties most exposed to immigration and trade were more likely to reduce support for Trump/Republicans, while counties with the least exposure consolidated Republican margins. These patterns suggest that status threat and identity-based attitudes, rather than material self-interest, continue to organize the post-2016 white Republican coalition.
-Keywords: voting; attitudes; China; Mexico; racial resentment; status threat; 2020; 2022; 2024
+
+*Keywords:* voting; attitudes; China; Mexico; racial resentment; status threat; 2020; 2022; 2024
 
 # Introduction (Updated 2026)
 From the launch of his campaign in June 2015, Donald Trump adeptly created a media narrative that America ceased being great because of border-raiding "illegal" immigrants and trade agreements such as NAFTA (now USMCA) and the Trans-Pacific Partnership (TPP) that ship U.S. jobs overseas (Green 2017). In particular, immigration from Latin America (Chavez 2013; Huntington 2004) and trade with China (Autor, Dorn, and Hanson 2016) and Mexico (Yúnez-Naude, Mora-Rivera, and Govea-Vargas 2024) have been portrayed as particularly threatening for at least the past two decades. In Trump's narrative, "real" American working people are hurt because America's border is being overrun by Mexico sending its worst people and "unfair" trade deals made by our "bad" leaders.
