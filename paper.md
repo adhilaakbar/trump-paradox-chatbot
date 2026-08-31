@@ -1,6 +1,6 @@
 # Trump Paradox II: Immigration, Trade, and White Voting and Attitudes, 2012–2024
 
-**Raul Hinojosa Ojeda¹ and Edward Telles²**
+**Raul Hinojosa Ojeda¹, Edward Telles², and Adhila Akbar¹**
 
 ¹ University of California, Los Angeles  |  ² University of California, Irvine
 
